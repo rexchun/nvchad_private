@@ -137,17 +137,6 @@ hooks.add("install_plugins", function(use)
     end,
   }
 
-  use {
-    "guns/vim-sexp",
-    ft = { "racket", "fennel", "clojure", "scheme" },
-    setup = function()
-      vim.g.sexp_filetypes = "clojure,scheme,lisp,fennel"
-    end,
-    config = function()
-      vim.g.sexp_enable_insert_mode_mappings = 0
-    end,
-  }
-
   use { "tpope/vim-sexp-mappings-for-regular-people", after = "vim-sexp" }
 
   use {
@@ -221,16 +210,14 @@ hooks.add("install_plugins", function(use)
       vim.g.grepper = { tools = { "rg", "git" }, searchreg = 1 }
 
       vim.cmd(
-        ([[
-    aug Grepper
-        au!
-        au User Grepper ++nested %s
-    aug END]]):format [[call setqflist([], 'r', {'context': {'bqf': {'pattern_hl': '\%#' . getreg('/')}}})]]
+        ([[aug Grepper
+              au!
+              au User Grepper ++nested %s
+           aug END]]):format [[call setqflist([], 'r', {'context': {'bqf': {'pattern_hl': '\%#' . getreg('/')}}})]]
       )
 
-      vim.cmd [[
-    nmap gs  <plug>(GrepperOperator)
-    xmap gs  <plug>(GrepperOperator)]]
+      vim.cmd [[nmap gs  <plug>(GrepperOperator)
+                xmap gs  <plug>(GrepperOperator)]]
     end,
   }
 
@@ -279,6 +266,24 @@ hooks.add("install_plugins", function(use)
     "RRethy/vim-illuminate",
     config = function()
       vim.g.Illuminate_delay = 400
+    end,
+  }
+
+  use {
+    "neovimhaskell/haskell-vim",
+    ft = "haskell",
+  }
+
+  use { "Shougo/context_filetype.vim" }
+
+  use {
+    "guns/vim-sexp",
+    ft = { "racket", "fennel", "clojure", "scheme" },
+    setup = function()
+      vim.g.sexp_filetypes = "clojure,scheme,lisp,fennel,racket"
+    end,
+    config = function()
+      vim.g.sexp_enable_insert_mode_mappings = 0
     end,
   }
 end)

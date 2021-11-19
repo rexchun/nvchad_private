@@ -10,16 +10,6 @@ local function on_attach(client, bufnr)
 
   require("illuminate").on_attach(client)
 
-  -- if client.resolved_capabilities.document_highlight then
-  --   vim.cmd [[
-  --     augroup lsp_document_highlight
-  --       autocmd! * <buffer>
-  --       autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()
-  --       autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-  --     augroup END
-  --   ]]
-  -- end
-
   -- Enable completion triggered by <c-x><c-o>
   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 
@@ -29,7 +19,9 @@ local function on_attach(client, bufnr)
   -- See `:help vim.lsp.*` for documentation on any of the below functions
   buf_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
   buf_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-  buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+  if vim.api.nvim_buf_get_option(0, "filetype") ~= "racket" then
+    buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+  end
   buf_set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
   buf_set_keymap("n", "gk", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
   buf_set_keymap(
@@ -80,7 +72,7 @@ local function on_attach(client, bufnr)
   )
   buf_set_keymap(
     "n",
-    "<space>l=",
+    "<space>lf",
     "<cmd>lua vim.lsp.buf.formatting()<CR>",
     opts
   )
@@ -90,6 +82,20 @@ local function on_attach(client, bufnr)
     "<cmd>lua vim.lsp.buf.range_code_action()<CR>",
     opts
   )
+  if vim.lsp.codelens and client.resolved_capabilities["code_lens"] then
+    vim.cmd [[
+      augroup lsp_document_highlight
+        autocmd! * <buffer>
+        autocmd BufEnter,InsertLeave <buffer> lua vim.lsp.codelens.refresh()
+      augroup END
+    ]]
+    buf_set_keymap(
+      "n",
+      "<leader>ll",
+      "<cmd>lua vim.lsp.codelens.run()<CR>",
+      opts
+    )
+  end
 end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()

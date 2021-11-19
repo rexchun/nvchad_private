@@ -1,6 +1,7 @@
-local ok, cmp = pcall(require, "cmp")
+local ok1, cmp = pcall(require, "cmp")
+local ok2, cmp_buffer = pcall(require, "cmp_buffer")
 
-if not ok then
+if not (ok1 or ok2) then
   return
 end
 
@@ -50,6 +51,9 @@ cmp.setup {
       cmp.config.compare.exact,
       cmp.config.compare.score,
       cmp.config.compare.recently_used,
+      function(...)
+        return cmp_buffer:compare_locality(...)
+      end,
       under,
       cmp.config.compare.kind,
       cmp.config.compare.length,
@@ -119,7 +123,7 @@ cmp.setup {
       vim_item.menu = ({
         nvim_lsp = "[LSP]",
         buffer = "[Buf]",
-        luasnip = "[Snip]",
+        vsnip = "[Snip]",
         nvim_lua = "[Lua]",
         conjure = "[Con]",
       })[entry.source.name]

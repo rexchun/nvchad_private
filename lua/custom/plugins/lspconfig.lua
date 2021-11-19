@@ -36,7 +36,7 @@ M.setup_lsp = function(attach, capabilities)
   lspconfig.clangd.setup {
     on_attach = attach,
     capabilities = capabilities,
-    filetypes = { "c", "objc", "objcpp", "cuda" },
+    filetypes = { "objc", "objcpp", "cuda" },
     cmd = {
       "clangd",
       "--background-index",
@@ -52,7 +52,7 @@ M.setup_lsp = function(attach, capabilities)
   lspconfig.ccls.setup {
     on_attach = attach,
     capabilities = capabilities,
-    filetypes = { "cpp" },
+    filetypes = { "c", "cpp" },
     cmd = { "ccls" },
     root_dir = function(fname)
       return util.root_pattern(
@@ -112,12 +112,21 @@ M.setup_lsp = function(attach, capabilities)
         completion = {
           callSnippet = "Replace",
         },
+        hint = {
+          enable = false,
+        },
         runtime = { version = "LuaJIT" },
         workspace = {
           library = {
             [vim.fn.expand "$VIMRUNTIME/lua"] = true,
             [vim.fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
           },
+        },
+        IntelliSense = {
+          traceLocalSet = true,
+          traceReturn = true,
+          traceBeSetted = true,
+          traceFieldInject = true,
         },
         telemetry = {
           enable = false,
