@@ -152,10 +152,13 @@ return packer.startup(function()
   }
 
   use {
-     "max397574/better-escape.nvim",
-     disable = not status.esc_insertmode,
-     event = "InsertEnter",
-     config = override_req("better_escape", "(plugins.configs.others).better_escape()"),
+    "max397574/better-escape.nvim",
+    disable = not status.esc_insertmode,
+    event = "InsertEnter",
+    config = override_req(
+      "better_escape",
+      "(plugins.configs.others).better_escape()"
+    ),
   }
 
   -- load luasnips + cmp related in insert mode only
