@@ -104,7 +104,7 @@ cmp.setup {
     {
       name = "buffer",
       keyword_length = 3,
-      opts = {
+      option = {
         keyword_pattern = [[\k\+]],
         get_bufnrs = function()
           local bufs = {}
@@ -115,7 +115,6 @@ cmp.setup {
         end,
       },
     },
-    { name = "nvim_lua" },
     { name = "path" },
     { name = "calc" },
   },
@@ -131,7 +130,6 @@ cmp.setup {
         nvim_lsp = "[LSP]",
         buffer = "[Buf]",
         vsnip = "[Snip]",
-        nvim_lua = "[Lua]",
         conjure = "[Con]",
       })[entry.source.name]
       return vim_item

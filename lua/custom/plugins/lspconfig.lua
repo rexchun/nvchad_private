@@ -111,6 +111,7 @@ M.setup_lsp = function(attach, capabilities)
         },
         completion = {
           callSnippet = "Replace",
+          showWord = "Disable",
         },
         hint = {
           enable = false,

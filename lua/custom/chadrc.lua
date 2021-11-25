@@ -67,6 +67,10 @@ M.mappings.plugins = {
     next_buffer = "]b", -- next buffer
     prev_buffer = "[b", -- previous buffer
   },
+  -- easily (un)comment code, language aware
+  comment = {
+    toggle = "gcc", -- toggle comment (works on multiple lines)
+  },
   better_escape = { -- <ESC> will still work
     esc_insertmode = { "jj" }, -- multiple mappings allowed
   },

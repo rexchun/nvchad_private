@@ -8,8 +8,6 @@ local function on_attach(client, bufnr)
     vim.api.nvim_buf_set_option(bufnr, ...)
   end
 
-  require("illuminate").on_attach(client)
-
   -- Enable completion triggered by <c-x><c-o>
   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 
@@ -86,7 +84,7 @@ local function on_attach(client, bufnr)
     vim.cmd [[
       augroup lsp_document_highlight
         autocmd! * <buffer>
-        autocmd BufEnter,InsertLeave <buffer> lua vim.lsp.codelens.refresh()
+        autocmd BufEnter,CursorHold,InsertLeave <buffer> lua vim.lsp.codelens.refresh()
       augroup END
     ]]
     buf_set_keymap(
@@ -96,6 +94,8 @@ local function on_attach(client, bufnr)
       opts
     )
   end
+
+  require("illuminate").on_attach(client)
 end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()

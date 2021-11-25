@@ -12,6 +12,7 @@ vim.cmd [[set scrolloff=4]]
 vim.cmd [[set scrolloff=4]]
 vim.cmd [[set sidescrolloff=5]]
 vim.cmd [[set nowrap]]
+vim.cmd [[set pumheight=10]]
 
 -- vim_matchup
 vim.g.matchup_matchparen_deferred = 1
@@ -23,8 +24,8 @@ vim.cmd [[let g:matchup_matchparen_offscreen = {'method': 'status_manual'}]]
 
 vim.cmd [[inoremap <silent> jj <esc>]]
 vim.cmd [[snoremap <silent> jj <esc>]]
-vim.cmd [[inoremap <silent> <C-j> <C-o>o]]
-vim.cmd [[inoremap <silent> <C-k> <C-o>O]]
+vim.cmd [[inoremap <silent> <C-j> <Esc>o]]
+vim.cmd [[inoremap <silent> <C-k> <Esc>O]]
 vim.cmd [[nnoremap : ;]]
 vim.cmd [[nnoremap ; :]]
 vim.cmd [[xnoremap : ;]]
@@ -43,6 +44,9 @@ vim.cmd [[smap <expr> <C-h>   vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)' : 
 
 vim.cmd [[command! Todo :Grepper -noprompt -tool git -grepprg git grep -nIi '\(TODO\|FIXME\)']]
 
+-- splitjoin
+-- vim.g.splitjoin_split_mapping = ""
+-- vim.g.splitjoin_join_mapping = ""
 vim.cmd [[set updatetime=300]]
 -- NOTE: To use this, make a copy with `cp example_init.lua init.lua`
 
@@ -126,7 +130,7 @@ hooks.add("install_plugins", function(use)
     "Olical/conjure",
     branch = "develop",
     config = function()
-      vim.cmd [[let g:conjure#client#scheme#stdio#command = "scheme"]]
+      vim.cmd [[let g:conjure#client#scheme#stdio#command = "petite"]]
       vim.cmd [[let g:conjure#client#scheme#stdio#prompt_pattern = "> $"]]
       vim.cmd [[let g:conjure#client#scheme#stdio#value_prefix_pattern = v:false]]
       vim.cmd [[let g:conjure#highlight#enabled = v:true]]
@@ -270,6 +274,19 @@ hooks.add("install_plugins", function(use)
     "RRethy/vim-illuminate",
     config = function()
       vim.g.Illuminate_delay = 400
+      vim.g.Illuminate_insert_mode_highlight = 1
+      vim.api.nvim_set_keymap(
+        "n",
+        "<a-n>",
+        '<cmd>lua require"illuminate".next_reference{wrap=true}<cr>',
+        { noremap = true, silent = true }
+      )
+      vim.api.nvim_set_keymap(
+        "n",
+        "<a-p>",
+        '<cmd>lua require"illuminate".next_reference{reverse=true,wrap=true}<cr>',
+        { noremap = true, silent = true }
+      )
     end,
   }
 
@@ -288,6 +305,35 @@ hooks.add("install_plugins", function(use)
     end,
     config = function()
       vim.g.sexp_enable_insert_mode_mappings = 0
+    end,
+  }
+
+  use {
+    "bfredl/nvim-miniyank",
+    keys = { "p", "y", "<C-v>" },
+    opt = true,
+    setup = function()
+      vim.api.nvim_command "map p <Plug>(miniyank-autoput)"
+      vim.api.nvim_command "map P <Plug>(miniyank-autoPut)"
+    end,
+  }
+
+  use {
+    "AndrewRadev/splitjoin.vim",
+    -- cmd = { "SplitjoinJoin", "SplitjoinSplit" },
+    config = function()
+      vim.api.nvim_set_keymap(
+        "n",
+        "<leader>j",
+        "<cmd>SplitjoinSplit<CR>",
+        { noremap = true, silent = true }
+      )
+      vim.api.nvim_set_keymap(
+        "n",
+        "<leader>k",
+        "<cmd>SplitjoinJoin<CR>",
+        { noremap = true, silent = true }
+      )
     end,
   }
 end)

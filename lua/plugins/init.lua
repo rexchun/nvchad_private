@@ -143,7 +143,7 @@ return packer.startup(function()
 
   use {
     "andymass/vim-matchup",
-    commit = "d0a84be64812f20d92fcd573980f0bc86e7c9bf5",
+    -- commit = "d0a84be64812f20d92fcd573980f0bc86e7c9bf5",
     disable = not status.vim_matchup,
     opt = true,
     setup = function()
@@ -172,6 +172,7 @@ return packer.startup(function()
   use {
     "hrsh7th/nvim-cmp",
     disable = not status.cmp,
+    event = "CmdlineEnter",
     after = "friendly-snippets",
     config = override_req("nvim_cmp", "plugins.configs.cmp"),
   }
@@ -191,15 +192,9 @@ return packer.startup(function()
   -- }
 
   use {
-    "hrsh7th/cmp-nvim-lua",
-    disable = not status.cmp,
-    after = "cmp-vsnip",
-  }
-
-  use {
     "hrsh7th/cmp-nvim-lsp",
     disable = not status.cmp,
-    after = "cmp-nvim-lua",
+    after = "cmp-vsnip",
   }
 
   use {

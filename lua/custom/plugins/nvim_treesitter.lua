@@ -18,6 +18,7 @@ treesitter.setup {
     "fennel",
   },
   autopairs = { enable = true },
+  matchup = { enable = true },
   highlight = {
     enable = true,
     disable = { "racket", "haskell" },
