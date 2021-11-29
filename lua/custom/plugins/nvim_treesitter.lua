@@ -23,4 +23,11 @@ treesitter.setup {
     enable = true,
     disable = { "racket", "haskell" },
   },
+  textsubjects = {
+    enable = true,
+    keymaps = {
+      ["<CR>"] = "textsubjects-smart",
+      ["<Tab>"] = "textsubjects-container-outer",
+    },
+  },
 }

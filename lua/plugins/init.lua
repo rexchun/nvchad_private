@@ -143,7 +143,6 @@ return packer.startup(function()
 
   use {
     "andymass/vim-matchup",
-    -- commit = "d0a84be64812f20d92fcd573980f0bc86e7c9bf5",
     disable = not status.vim_matchup,
     opt = true,
     setup = function()

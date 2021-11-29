@@ -16,16 +16,18 @@ M.setup_lsp = function(attach, capabilities)
     }
   end
 
-  require("rust-tools").setup {
-    server = {
-      on_attach = attach,
-      capabilities = capabilities,
-      filetypes = { "rust" },
-      flags = {
-        debounce_text_changes = 100,
+  if vim.bo.filetype == "rust" then
+    require("rust-tools").setup {
+      server = {
+        on_attach = attach,
+        capabilities = capabilities,
+        filetypes = { "rust" },
+        flags = {
+          debounce_text_changes = 100,
+        },
       },
-    },
-  }
+    }
+  end
 
   lspconfig.racket_langserver.setup {
     on_attach = attach,
@@ -111,7 +113,7 @@ M.setup_lsp = function(attach, capabilities)
         },
         completion = {
           callSnippet = "Replace",
-          showWord = "Disable",
+          showWord = "enable",
         },
         hint = {
           enable = false,

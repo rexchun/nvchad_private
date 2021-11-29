@@ -60,6 +60,19 @@ M.mappings = {
     moveUp = "<M-k>",
     moveDown = "<M-j>",
   },
+  terminal = {
+    -- multiple mappings can be given for esc_termmode and esc_hide_termmode
+    -- get out of terminal mode
+    esc_termmode = { [[<C-\><C-n>]] }, -- multiple mappings allowed
+    -- get out of terminal mode and hide it
+    esc_hide_termmode = { "<esc>" }, -- multiple mappings allowed
+    -- show & recover hidden terminal buffers in a telescope picker
+    pick_term = "<leader>W",
+    -- below three are for spawning terminals
+    new_horizontal = "<leader>h",
+    new_vertical = "<leader>v",
+    new_window = "<leader>w",
+  },
 }
 
 M.mappings.plugins = {

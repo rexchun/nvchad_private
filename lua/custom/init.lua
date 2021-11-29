@@ -12,6 +12,8 @@ vim.cmd [[set scrolloff=4]]
 vim.cmd [[set scrolloff=4]]
 vim.cmd [[set sidescrolloff=5]]
 vim.cmd [[set nowrap]]
+vim.cmd [[set noswapfile]]
+vim.cmd [[set nobackup]]
 vim.cmd [[set pumheight=10]]
 
 -- vim_matchup
@@ -42,12 +44,16 @@ vim.cmd [[smap <expr> <C-l>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '
 vim.cmd [[smap <expr> <C-h>   vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)' : '<Esc>I']]
 vim.cmd [[smap <expr> <C-h>   vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)' : '<Esc>I']]
 
-vim.cmd [[command! Todo :Grepper -noprompt -tool git -grepprg git grep -nIi '\(TODO\|FIXME\)']]
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader>le",
+  "vim.diagnostic.open_float()",
+  { silent = true, noremap = true }
+)
 
 -- splitjoin
 -- vim.g.splitjoin_split_mapping = ""
 -- vim.g.splitjoin_join_mapping = ""
-vim.cmd [[set updatetime=300]]
 -- NOTE: To use this, make a copy with `cp example_init.lua init.lua`
 
 --------------------------------------------------------------------
@@ -74,6 +80,7 @@ vim.cmd [[set updatetime=300]]
 hooks.add("install_plugins", function(use)
   use {
     "kevinhwang91/nvim-bqf",
+    branch = "dev",
     ft = "qf",
     config = function()
       require("bqf").setup {
@@ -102,7 +109,9 @@ hooks.add("install_plugins", function(use)
 
   use {
     "machakann/vim-sandwich",
+    commit = "4cd1ea8db6aa43af8e1996422e2010c49d3a5998",
     config = function()
+      vim.cmd [[let g:sandwich#recipes = deepcopy(g:sandwich#default_recipes)]]
       vim.cmd [[runtime macros/sandwich/keymap/surround.vim]]
     end,
   }
@@ -124,14 +133,18 @@ hooks.add("install_plugins", function(use)
     end,
   }
 
-  use { "wlangstroth/vim-racket" }
+  use {
+    "wlangstroth/vim-racket",
+    ft = "racket",
+  }
 
   use {
     "Olical/conjure",
     branch = "develop",
+    ft = { "racket", "scheme", "fennel", "lisp" },
     config = function()
       vim.cmd [[let g:conjure#client#scheme#stdio#command = "petite"]]
-      vim.cmd [[let g:conjure#client#scheme#stdio#prompt_pattern = "> $"]]
+      vim.cmd [[let g:conjure#client#scheme#stdio#prompt_pattern = "\n?> $"]]
       vim.cmd [[let g:conjure#client#scheme#stdio#value_prefix_pattern = v:false]]
       vim.cmd [[let g:conjure#highlight#enabled = v:true]]
     end,
@@ -140,6 +153,7 @@ hooks.add("install_plugins", function(use)
   use {
     "Olical/aniseed",
     branch = "develop",
+    after = "conjure",
     config = function()
       vim.cmd [[let g:conjure#client#fennel#aniseed#aniseed_module_prefix = "aniseed."]]
     end,
@@ -215,14 +229,34 @@ hooks.add("install_plugins", function(use)
         ":Grepper -tool rg -cword -noprompt<CR>",
         { noremap = true }
       )
-      vim.g.grepper = { tools = { "rg", "git" }, searchreg = 1 }
+      vim.g.grepper = {
+        tools = { "rg", "git" },
+        dir = "repo,file",
+        open = 0,
+        switch = 1,
+        jump = 0,
+        simple_prompt = 1,
+        quickfix = 1,
+        searchreg = 1,
+        highlight = 0,
+        stop = 10000,
+        rg = {
+          grepprg = "rg -H --no-heading --vimgrep --smart-case",
+          grepformat = "%f:%l:%c:%m,%f:%l:%m",
+        },
+      }
 
       vim.cmd(
         ([[aug Grepper
               au!
-              au User Grepper ++nested %s
-           aug END]]):format [[call setqflist([], 'r', {'context': {'bqf': {'pattern_hl': '\%#' . getreg('/')}}})]]
+              au User Grepper ++nested %s | %s
+           aug END]]):format(
+          [[call setqflist([], 'r', {'context': {'bqf': {'pattern_hl': '\%#' . getreg('/')}}})]],
+          "bo cope"
+        )
       )
+
+      vim.cmd [[command! Todo :Grepper -noprompt -tool git -grepprg git grep -nIi '\(TODO\|FIXME\)']]
 
       vim.cmd [[nmap gs  <plug>(GrepperOperator)
                 xmap gs  <plug>(GrepperOperator)]]
@@ -250,6 +284,7 @@ hooks.add("install_plugins", function(use)
 
   use {
     "simrat39/rust-tools.nvim",
+    ft = "rust",
     requires = {
       "nvim-lua/popup.nvim",
       "nvim-lua/plenary.nvim",
@@ -270,25 +305,25 @@ hooks.add("install_plugins", function(use)
     after = "nvim-cmp",
   }
 
-  use {
-    "RRethy/vim-illuminate",
-    config = function()
-      vim.g.Illuminate_delay = 400
-      vim.g.Illuminate_insert_mode_highlight = 1
-      vim.api.nvim_set_keymap(
-        "n",
-        "<a-n>",
-        '<cmd>lua require"illuminate".next_reference{wrap=true}<cr>',
-        { noremap = true, silent = true }
-      )
-      vim.api.nvim_set_keymap(
-        "n",
-        "<a-p>",
-        '<cmd>lua require"illuminate".next_reference{reverse=true,wrap=true}<cr>',
-        { noremap = true, silent = true }
-      )
-    end,
-  }
+  -- use {
+  --   "RRethy/vim-illuminate",
+  --   config = function()
+  --     vim.g.Illuminate_delay = 400
+  --     vim.g.Illuminate_insert_mode_highlight = 1
+  --     vim.api.nvim_set_keymap(
+  --       "n",
+  --       "<a-n>",
+  --       '<cmd>lua require"illuminate".next_reference{wrap=true}<cr>',
+  --       { noremap = true, silent = true }
+  --     )
+  --     vim.api.nvim_set_keymap(
+  --       "n",
+  --       "<a-p>",
+  --       '<cmd>lua require"illuminate".next_reference{reverse=true,wrap=true}<cr>',
+  --       { noremap = true, silent = true }
+  --     )
+  --   end,
+  -- }
 
   use {
     "neovimhaskell/haskell-vim",
@@ -309,16 +344,6 @@ hooks.add("install_plugins", function(use)
   }
 
   use {
-    "bfredl/nvim-miniyank",
-    keys = { "p", "y", "<C-v>" },
-    opt = true,
-    setup = function()
-      vim.api.nvim_command "map p <Plug>(miniyank-autoput)"
-      vim.api.nvim_command "map P <Plug>(miniyank-autoPut)"
-    end,
-  }
-
-  use {
     "AndrewRadev/splitjoin.vim",
     -- cmd = { "SplitjoinJoin", "SplitjoinSplit" },
     config = function()
@@ -335,6 +360,11 @@ hooks.add("install_plugins", function(use)
         { noremap = true, silent = true }
       )
     end,
+  }
+
+  use {
+    "RRethy/nvim-treesitter-textsubjects",
+    after = "nvim-treesitter",
   }
 end)
 

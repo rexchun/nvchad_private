@@ -132,6 +132,11 @@ cmp.setup {
         vsnip = "[Snip]",
         conjure = "[Con]",
       })[entry.source.name]
+
+      vim_item.dup = ({
+        conjure = 0,
+        nvim_lsp = 0,
+      })[entry.source.name] or 0
       return vim_item
     end,
   },

@@ -1,4 +1,5 @@
 local overrides = require("core.hooks").createOverrides "lsp"
+local util = require "vim.lsp.util"
 
 local function on_attach(client, bufnr)
   local function buf_set_keymap(...)
@@ -95,7 +96,10 @@ local function on_attach(client, bufnr)
     )
   end
 
-  require("illuminate").on_attach(client)
+  vim.api.nvim_command [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
+  -- vim.api.nvim_command [[autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()]]
+  vim.api.nvim_command [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
+  vim.api.nvim_command [[autocmd InsertEnter <buffer> lua vim.lsp.buf.clear_references()]]
 end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -153,6 +157,28 @@ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
     border = "single",
   }
 )
+
+local function location_handler(_, result, ctx, _)
+  if result == nil or vim.tbl_isempty(result) then
+    return nil
+  end
+
+  -- textDocument/definition can return Location or Location[]
+  -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
+
+  if vim.tbl_islist(result) then
+    util.jump_to_location(result[1])
+
+    if #result > 1 then
+      util.set_qflist(util.locations_to_items(result))
+      vim.api.nvim_command "botright copen"
+    end
+  else
+    util.jump_to_location(result)
+  end
+end
+
+vim.lsp.handlers["textDocument/definition"] = location_handler
 
 -- suppress error messages from lang servers
 vim.notify = function(msg, log_level, _opts)
