@@ -4,6 +4,27 @@
 local hooks = require "core.hooks"
 -- vim.cmd [[au FileType racket,clojure,fennel,scheme colorscheme srcery]]
 
+vim.cmd [[
+augroup init
+  autocmd!
+  autocmd CmdWinEnter * nnoremap <buffer> q <C-W>q
+
+  " Highlight yanked text
+  autocmd TextYankPost * lua vim.highlight.on_yank {higroup="Visual", timeout=150, on_visual=true}
+
+  " Hide cursorline in insert mode and when the current window doesn't have
+  " focus
+  autocmd InsertEnter,WinLeave,FocusLost * setlocal nocursorline
+  autocmd InsertLeave,WinEnter,FocusGained * if mode() !=# 'i' | let &l:cursorline = 1 | endif
+
+  " Create missing parent directories automatically
+  autocmd BufNewFile * autocmd BufWritePre <buffer> ++once call mkdir(expand('%:h'), 'p')
+
+  " Defer setting the colorscheme until the UI loads (micro optimization)
+  autocmd BufReadPre * colorscheme srcery
+augroup END
+]]
+
 vim.cmd [[set grepformat="%f:%l:%c:%m"]]
 vim.cmd [[set grepprg="rg --hidden --vimgrep --smart-case --"]]
 vim.cmd [[set jumpoptions="stack"]]
@@ -19,7 +40,7 @@ vim.cmd [[set pumheight=10]]
 -- vim_matchup
 vim.g.matchup_matchparen_deferred = 1
 -- vim.cmd [[autocmd FileType scheme,racket,fennel,clojure let b:matchup_matchparen_hi_surround_always = 1]]
-vim.cmd [[let g:matchup_matchparen_offscreen = {'method': 'status_manual'}]]
+vim.cmd [[let g:matchup_matchparen_offscreen = {}]]
 
 -- sexp
 -- vim.cmd [[let g:sexp_filetypes = 'clojure,scheme,lisp,timl,fennel']]
@@ -44,13 +65,50 @@ vim.cmd [[smap <expr> <C-l>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '
 vim.cmd [[smap <expr> <C-h>   vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)' : '<Esc>I']]
 vim.cmd [[smap <expr> <C-h>   vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)' : '<Esc>I']]
 
+vim.diagnostic.config {
+  virtual_text = false,
+  signs = true,
+  update_in_insert = false,
+  float = {
+    source = "always",
+    focusable = false, -- See neovim#16425
+    border = "single",
+  },
+}
+
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
+
 vim.api.nvim_set_keymap(
   "n",
-  "<leader>le",
-  "vim.diagnostic.open_float()",
+  "<space>le",
+  '<cmd>lua vim.diagnostic.open_float(0, { scope = "line" })<CR>',
   { silent = true, noremap = true }
 )
 
+vim.api.nvim_set_keymap(
+  "n",
+  "<space>lq",
+  "<cmd>lua vim.diagnostic.setqflist()<CR>",
+  { silent = true, noremap = true }
+)
+
+vim.api.nvim_set_keymap(
+  "n",
+  "[e",
+  "<cmd>lua vim.diagnostic.goto_prev()<CR>",
+  { silent = true, noremap = true }
+)
+
+vim.api.nvim_set_keymap(
+  "n",
+  "]e",
+  "<cmd>lua vim.diagnostic.goto_next()<CR>",
+  { silent = true, noremap = true }
+)
 -- splitjoin
 -- vim.g.splitjoin_split_mapping = ""
 -- vim.g.splitjoin_join_mapping = ""
@@ -99,13 +157,6 @@ hooks.add("install_plugins", function(use)
         "cc cr cb cB lc ac Ac lr lb ar ab rr rb bb ll al aa"
     end,
   }
-  use {
-    "hrsh7th/vim-eft",
-    opt = true,
-    config = function()
-      vim.g.eft_ignorecase = true
-    end,
-  }
 
   use {
     "machakann/vim-sandwich",
@@ -143,8 +194,8 @@ hooks.add("install_plugins", function(use)
     branch = "develop",
     ft = { "racket", "scheme", "fennel", "lisp" },
     config = function()
-      vim.cmd [[let g:conjure#client#scheme#stdio#command = "petite"]]
-      vim.cmd [[let g:conjure#client#scheme#stdio#prompt_pattern = "\n?> $"]]
+      vim.cmd [[let g:conjure#client#scheme#stdio#command = "petite -q"]]
+      vim.cmd [[let g:conjure#client#scheme#stdio#prompt_pattern = "$?"]]
       vim.cmd [[let g:conjure#client#scheme#stdio#value_prefix_pattern = v:false]]
       vim.cmd [[let g:conjure#highlight#enabled = v:true]]
     end,
@@ -154,6 +205,7 @@ hooks.add("install_plugins", function(use)
     "Olical/aniseed",
     branch = "develop",
     after = "conjure",
+    ft = "fennel",
     config = function()
       vim.cmd [[let g:conjure#client#fennel#aniseed#aniseed_module_prefix = "aniseed."]]
     end,
@@ -365,6 +417,11 @@ hooks.add("install_plugins", function(use)
   use {
     "RRethy/nvim-treesitter-textsubjects",
     after = "nvim-treesitter",
+  }
+
+  use {
+    "nvim-treesitter/playground",
+    command = "TSPlaygroundToggle",
   }
 end)
 
