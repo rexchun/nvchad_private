@@ -422,13 +422,30 @@ hooks.add("install_plugins", function(use)
   }
 
   use {
+    "Raimondi/delimitMate",
+    config = function()
+      vim.cmd [[let delimitMate_autoclose = 1]]
+      vim.cmd [[let delimitMate_matchpairs = ""]]
+      vim.cmd [[let delimitMate_balance_matchpairs = 0]]
+      vim.cmd [[let delimitMate_expand_cr = 1]]
+      vim.cmd [[let delimitMate_excluded_regions = "String"]]
+      vim.cmd [[au FileType racket,lisp,scheme,fennel let b:delimitMate_quotes = '" `']]
+    end,
+  }
+
+  use {
     "steelsojka/pears.nvim",
     config = function()
-      require("pears").setup(function(conf)
-        conf.pair(
-          "'",
-          { filetypes = { exclude = { "racket", "scheme", "fennel", "lisp" } } }
-        )
+      local R = require "pears.rule"
+      require("pears").setup(function(c)
+        c.pair("(", { close = ")", should_return = R.F })
+        c.pair('"', nil)
+        c.pair('"""', nil)
+        c.pair("'''", nil)
+        c.pair("'", nil)
+        c.pair("`", nil)
+        c.pair("```", nil)
+        c.remove_pair_on_outer_backspace(false)
       end)
     end,
   }
