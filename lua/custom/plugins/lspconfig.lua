@@ -78,9 +78,6 @@ M.setup_lsp = function(attach, capabilities)
         -- trackDependency = 2,
         initialNoLinkage = true,
       },
-      -- completion = {
-      --   filterAndSort = false,
-      -- },
       cache = {
         directory = "/tmp/ccls-cache/",
       },
@@ -113,7 +110,6 @@ M.setup_lsp = function(attach, capabilities)
         },
         completion = {
           callSnippet = "Replace",
-          showWord = "enable",
         },
         hint = {
           enable = false,

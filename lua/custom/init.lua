@@ -19,9 +19,6 @@ augroup init
 
   " Create missing parent directories automatically
   autocmd BufNewFile * autocmd BufWritePre <buffer> ++once call mkdir(expand('%:h'), 'p')
-
-  " Defer setting the colorscheme until the UI loads (micro optimization)
-  autocmd BufReadPre * colorscheme srcery
 augroup END
 ]]
 
@@ -70,7 +67,7 @@ vim.diagnostic.config {
   signs = true,
   update_in_insert = false,
   float = {
-    source = "always",
+    source = "if_many",
     focusable = false, -- See neovim#16425
     border = "single",
   },
@@ -85,7 +82,7 @@ end
 vim.api.nvim_set_keymap(
   "n",
   "<space>le",
-  '<cmd>lua vim.diagnostic.open_float(0, { scope = "line" })<CR>',
+  [[<cmd>lua vim.diagnostic.open_float(0, { scope = "line", close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" }})<CR>]],
   { silent = true, noremap = true }
 )
 
@@ -194,8 +191,8 @@ hooks.add("install_plugins", function(use)
     branch = "develop",
     ft = { "racket", "scheme", "fennel", "lisp" },
     config = function()
-      vim.cmd [[let g:conjure#client#scheme#stdio#command = "petite -q"]]
-      vim.cmd [[let g:conjure#client#scheme#stdio#prompt_pattern = "$?"]]
+      vim.cmd [[let g:conjure#client#scheme#stdio#command = "petite"]]
+      vim.cmd [[let g:conjure#client#scheme#stdio#prompt_pattern = "> $?"]]
       vim.cmd [[let g:conjure#client#scheme#stdio#value_prefix_pattern = v:false]]
       vim.cmd [[let g:conjure#highlight#enabled = v:true]]
     end,
@@ -422,6 +419,18 @@ hooks.add("install_plugins", function(use)
   use {
     "nvim-treesitter/playground",
     command = "TSPlaygroundToggle",
+  }
+
+  use {
+    "steelsojka/pears.nvim",
+    config = function()
+      require("pears").setup(function(conf)
+        conf.pair(
+          "'",
+          { filetypes = { exclude = { "racket", "scheme", "fennel", "lisp" } } }
+        )
+      end)
+    end,
   }
 end)
 

@@ -13,7 +13,6 @@ treesitter.setup {
     "lua",
     "python",
     "cmake",
-    "haskell",
     "vim",
     "fennel",
     "query",

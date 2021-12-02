@@ -18,7 +18,7 @@ local Rule = require "nvim-autopairs.rule"
 
 npairs.setup {
   disable_filetype = { "racket", "clojure", "scheme", "lisp", "fennel" },
-  enable_check_bracket_line = false,
+  enable_check_bracket_line = true,
   check_ts = true,
   fast_wrap = {},
 }
