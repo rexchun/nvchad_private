@@ -68,6 +68,8 @@ vim.diagnostic.config {
   signs = true,
   update_in_insert = false,
   float = {
+    header = '',
+    prefix = '',
     source = "if_many",
     focusable = false, -- See neovim#16425
     border = "single",
