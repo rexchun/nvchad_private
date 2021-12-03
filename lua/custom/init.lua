@@ -242,6 +242,7 @@ hooks.add("install_plugins", function(use)
 
   use {
     "bakpakin/fennel.vim",
+    ft = "fennel",
   }
 
   use {

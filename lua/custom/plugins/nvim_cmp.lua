@@ -119,19 +119,20 @@ cmp.setup {
     { name = "calc" },
   },
   formatting = {
+    fields = { "kind", "abbr", "menu" },
     format = function(entry, vim_item)
       vim_item.kind = string.format(
-        "%s %s",
-        require("plugins.configs.lspkind_icons").icons[vim_item.kind],
-        vim_item.kind
+        "%s",
+        require("plugins.configs.lspkind_icons").icons[vim_item.kind]
+        -- vim_item.kind
       )
 
-      vim_item.menu = ({
-        nvim_lsp = "[LSP]",
-        buffer = "[Buf]",
-        vsnip = "[Snip]",
-        conjure = "[Con]",
-      })[entry.source.name]
+      -- vim_item.menu = ({
+      --   nvim_lsp = "[LSP]",
+      --   buffer = "[Buf]",
+      --   snippy = "[Snip]",
+      --   conjure = "[Con]",
+      -- })[entry.source.name]
 
       vim_item.dup = ({
         conjure = 0,
