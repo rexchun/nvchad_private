@@ -1,7 +1,8 @@
 local ok1, cmp = pcall(require, "cmp")
 local ok2, cmp_buffer = pcall(require, "cmp_buffer")
+local ok3, snippy = pcall(require, "snippy")
 
-if not (ok1 or ok2) then
+if not (ok1 or ok2 or ok3) then
   return
 end
 
@@ -64,8 +65,7 @@ cmp.setup {
   -- You should change this example to your chosen snippet engine.
   snippet = {
     expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body)
-      -- require("luasnip").lsp_expand(args.body)
+      snippy.expand_snippet(args.body)
     end,
   },
   -- You must set mapping.
@@ -83,9 +83,9 @@ cmp.setup {
     ["<Tab>"] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.confirm { select = true, behavior = cmp.ConfirmBehavior.Replace }
-        -- elseif require("luasnip").expand_or_jumpable() then
-      elseif vim.fn["vsnip#available"](1) == 1 then
-        vim.fn.feedkeys(t "<Plug>(vsnip-expand-or-jump)", "")
+      elseif snippy.can_expand_or_advance() then
+        snippy.expand_or_advance()
+        -- vim.fn.feedkeys(t "<Plug>(vsnip-expand-or-jump)", "")
       else
         fallback()
       end
@@ -99,7 +99,7 @@ cmp.setup {
   sources = {
     { name = "nvim_lsp" },
     -- { name = "luasnip" },
-    { name = "vsnip" },
+    { name = "snippy" },
     { name = "conjure" },
     {
       name = "buffer",

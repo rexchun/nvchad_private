@@ -57,10 +57,11 @@ vim.cmd [[tnoremap <a-l> <c-\><c-n><c-w>l]]
 vim.cmd [[tnoremap <a-j> <c-\><c-n><c-w>j]]
 vim.cmd [[tnoremap <a-k> <c-\><c-n><c-w>k]]
 
-vim.cmd [[imap <expr> <C-l>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Esc>A']]
-vim.cmd [[smap <expr> <C-l>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Esc>A']]
-vim.cmd [[smap <expr> <C-h>   vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)' : '<Esc>I']]
-vim.cmd [[smap <expr> <C-h>   vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)' : '<Esc>I']]
+vim.cmd [[imap <expr> <C-l>   snippy#can_jump(1)  ? '<Plug>(snippy-next)' : '<Esc>A']]
+vim.cmd [[smap <expr> <C-l>   snippy#can_jump(1)  ? '<Plug>snippy-next()' : '<Esc>A']]
+vim.cmd [[smap <expr> <C-h>   snippy#can_jump(-1)  ? '<Plug>(snippy-previous)' : '<Esc>I']]
+vim.cmd [[smap <expr> <C-h>   snippy#can_jump(-1)  ? '<Plug>(snippy-previous)' : '<Esc>I']]
+vim.cmd [[xmap <Tab> <Plug>(snippy-cut-text)]]
 
 vim.diagnostic.config {
   virtual_text = false,
@@ -341,18 +342,18 @@ hooks.add("install_plugins", function(use)
     },
   }
 
-  use {
-    "hrsh7th/vim-vsnip",
-    event = "InsertEnter",
-    config = function()
-      vim.cmd [[let g:vsnip_snippet_dirs = ["~/.local/share/nvim/site/pack/packer/opt/friendly-snippets/snippets/"] ]]
-    end,
-  }
-
-  use {
-    "hrsh7th/cmp-vsnip",
-    after = "nvim-cmp",
-  }
+  --   use {
+  --     "hrsh7th/vim-vsnip",
+  --     event = "InsertEnter",
+  --     config = function()
+  --       vim.cmd [[let g:vsnip_snippet_dirs = ["~/.local/share/nvim/site/pack/packer/opt/friendly-snippets/snippets/"] ]]
+  --     end,
+  --   }
+  --
+  --   use {
+  --     "hrsh7th/cmp-vsnip",
+  --     after = "nvim-cmp",
+  --   }
 
   -- use {
   --   "RRethy/vim-illuminate",
@@ -448,6 +449,26 @@ hooks.add("install_plugins", function(use)
         c.remove_pair_on_outer_backspace(false)
       end)
     end,
+  }
+
+  use {
+    "dcampos/nvim-snippy",
+    event = "InsertEnter",
+  }
+
+  use {
+    "dcampos/cmp-snippy",
+    after = "nvim-cmp",
+    config = function ()
+      require "snippy".setup({
+        choice_delay = 50
+      })
+    end
+  }
+
+  use {
+    "honza/vim-snippets",
+    event = "InsertEnter",
   }
 end)
 

@@ -162,17 +162,17 @@ return packer.startup(function()
 
   -- load luasnips + cmp related in insert mode only
 
-  use {
-    "rafamadriz/friendly-snippets",
-    disable = not status.cmp,
-    event = "InsertEnter",
-  }
+  -- use {
+  --   "rafamadriz/friendly-snippets",
+  --   disable = not status.cmp,
+  --   event = "InsertEnter",
+  -- }
 
   use {
     "hrsh7th/nvim-cmp",
     disable = not status.cmp,
     event = "CmdlineEnter",
-    after = "friendly-snippets",
+    after = "vim-snippets",
     config = override_req("nvim_cmp", "plugins.configs.cmp"),
   }
 
@@ -193,7 +193,7 @@ return packer.startup(function()
   use {
     "hrsh7th/cmp-nvim-lsp",
     disable = not status.cmp,
-    after = "cmp-vsnip",
+    after = "cmp-snippy",
   }
 
   use {
