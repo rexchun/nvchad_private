@@ -56,6 +56,7 @@ vim.cmd [[tnoremap <a-h> <c-\><c-n><c-w>h]]
 vim.cmd [[tnoremap <a-l> <c-\><c-n><c-w>l]]
 vim.cmd [[tnoremap <a-j> <c-\><c-n><c-w>j]]
 vim.cmd [[tnoremap <a-k> <c-\><c-n><c-w>k]]
+vim.cmd [[nnoremap <space>bo :tabonly<CR>]]
 
 vim.cmd [[imap <expr> <C-l>   snippy#can_jump(1)  ? '<Plug>(snippy-next)' : '<Esc>A']]
 vim.cmd [[smap <expr> <C-l>   snippy#can_jump(1)  ? '<Plug>snippy-next()' : '<Esc>A']]
@@ -63,13 +64,15 @@ vim.cmd [[smap <expr> <C-h>   snippy#can_jump(-1)  ? '<Plug>(snippy-previous)' :
 vim.cmd [[smap <expr> <C-h>   snippy#can_jump(-1)  ? '<Plug>(snippy-previous)' : '<Esc>I']]
 vim.cmd [[xmap <Tab> <Plug>(snippy-cut-text)]]
 
+vim.cmd [[au FileType rust set iskeyword+=!]]
+
 vim.diagnostic.config {
   virtual_text = false,
   signs = true,
   update_in_insert = false,
   float = {
-    header = '',
-    prefix = '',
+    header = "",
+    prefix = "",
     source = "if_many",
     focusable = false, -- See neovim#16425
     border = "single",
@@ -429,30 +432,30 @@ hooks.add("install_plugins", function(use)
     "Raimondi/delimitMate",
     config = function()
       vim.cmd [[let delimitMate_autoclose = 1]]
-      vim.cmd [[let delimitMate_matchpairs = ""]]
-      vim.cmd [[let delimitMate_balance_matchpairs = 0]]
+      -- vim.cmd [[let delimitMate_matchpairs = ""]]
+      vim.cmd [[let delimitMate_balance_matchpairs = 1]]
       vim.cmd [[let delimitMate_expand_cr = 1]]
       vim.cmd [[let delimitMate_excluded_regions = "String"]]
       vim.cmd [[au FileType racket,lisp,scheme,fennel let b:delimitMate_quotes = '" `']]
     end,
   }
 
-  use {
-    "steelsojka/pears.nvim",
-    config = function()
-      local R = require "pears.rule"
-      require("pears").setup(function(c)
-        c.pair("(", { close = ")", should_return = R.F })
-        c.pair('"', nil)
-        c.pair('"""', nil)
-        c.pair("'''", nil)
-        c.pair("'", nil)
-        c.pair("`", nil)
-        c.pair("```", nil)
-        c.remove_pair_on_outer_backspace(false)
-      end)
-    end,
-  }
+  -- use {
+  --   "steelsojka/pears.nvim",
+  --   config = function()
+  --     local R = require "pears.rule"
+  --     require("pears").setup(function(c)
+  --       c.pair("(", { close = ")", should_return = R.F })
+  --       c.pair('"', nil)
+  --       c.pair('"""', nil)
+  --       c.pair("'''", nil)
+  --       c.pair("'", nil)
+  --       c.pair("`", nil)
+  --       c.pair("```", nil)
+  --       c.remove_pair_on_outer_backspace(false)
+  --     end)
+  --   end,
+  -- }
 
   use {
     "dcampos/nvim-snippy",
@@ -462,11 +465,11 @@ hooks.add("install_plugins", function(use)
   use {
     "dcampos/cmp-snippy",
     after = "nvim-cmp",
-    config = function ()
-      require "snippy".setup({
-        choice_delay = 50
-      })
-    end
+    config = function()
+      require("snippy").setup {
+        choice_delay = 50,
+      }
+    end,
   }
 
   use {

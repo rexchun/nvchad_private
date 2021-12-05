@@ -99,7 +99,10 @@ cmp.setup {
   sources = {
     { name = "nvim_lsp" },
     -- { name = "luasnip" },
-    { name = "snippy" },
+    {
+      name = "snippy",
+      keyword_length = 2,
+    },
     { name = "conjure" },
     {
       name = "buffer",

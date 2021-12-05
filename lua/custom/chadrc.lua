@@ -27,6 +27,7 @@ M.options = {
 -- NvChad included plugin options & overrides
 M.plugins = {
   status = {
+    blankline = false,
     esc_insertmode = false,
   },
   options = {
